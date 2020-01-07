@@ -5,6 +5,9 @@ from datetime import datetime, timedelta, date
 import json
 import time
 
+login = input("Input your login: ")
+print("--------------------------")
+
 
 def get_config():
 	config = ConfigParser({}, dict)
@@ -125,7 +128,7 @@ def get_more_location(client, request, locations, range_begin):
 
 def twodaysago():
 	client = get_token("client_credentials")
-	login = get_config()["42.login"]
+	#login = get_config()["42.login"]
 	user_id = get_user_id(client, login)
 	range_begin, range_end = get_range_logtime_two()
 	range_date = "?page[size]=100&range[begin_at]=" + str(range_begin) + "," + str(range_end)
@@ -150,7 +153,7 @@ def twodaysago():
 
 def yesterday():
 	client = get_token("client_credentials")
-	login = get_config()["42.login"]
+	#login = get_config()["42.login"]
 	user_id = get_user_id(client, login)
 	range_begin, range_end = get_range_logtime_yesterday()
 	range_date = "?page[size]=100&range[begin_at]=" + str(range_begin) + "," + str(range_end)
@@ -175,7 +178,7 @@ def yesterday():
 
 def today():
 	client = get_token("client_credentials")
-	login = get_config()["42.login"]
+	#login = get_config()["42.login"]
 	user_id = get_user_id(client, login)
 	range_begin, range_end = get_range_logtime_today()
 	range_date = "?page[size]=100&range[begin_at]=" + str(range_begin) + "," + str(range_end)
