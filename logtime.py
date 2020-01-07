@@ -5,10 +5,6 @@ from datetime import datetime, timedelta, date
 import json
 import time
 
-login = input("Input your login: ")
-print("--------------------------")
-
-
 def get_config():
 	config = ConfigParser({}, dict)
 	config.read('config.conf')
@@ -207,5 +203,9 @@ def main():
 	yesterday()
 	time.sleep(1/2)
 	twodaysago()
+
+
+login = input("Input your login: ")
+print("--------------------------")
 
 main()

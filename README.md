@@ -11,9 +11,6 @@ You will also need to update the config file with your **client_id** and **clien
 ```
 42.client_id = YOUR_CLIENT_ID
 42.client_secret = YOUR_CLIENT_SECRET
-42.token_url = https://api.intra.42.fr/oauth/token
-42.endpoint = https://api.intra.42.fr
-42.login = YOUR_LOGIN
 ```
 
 ## How to use
