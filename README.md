@@ -16,7 +16,7 @@ You will also need to update the config file with your **client_id** and **clien
 42.login = YOUR_LOGIN
 ```
 
-## Usage
+## How to use
 You can execute the script from the folder like this :
 ```
 python3.7 logtime.py
