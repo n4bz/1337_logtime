@@ -11,9 +11,9 @@ def get_config():
 	c = config._sections['sanction']
 	return config._sections['sanction']
 
-def get_range_logtime_two():
-	begin = get_date_two("begin")
-	end = get_date_two("end")
+def get_range_logtime_today():
+	begin = get_date_today("begin")
+	end = get_date_today("end")
 	if begin > end:
 		sys.exit("Begin_date is after end_date ...")
 	return begin, end
@@ -25,12 +25,21 @@ def get_range_logtime_yesterday():
 		sys.exit("Begin_date is after end_date ...")
 	return begin, end
 
-def get_range_logtime_today():
-	begin = get_date_today("begin")
-	end = get_date_today("end")
-	if begin > end:
-		sys.exit("Begin_date is after end_date ...")
-	return begin, end
+
+def get_range_logtime_week():
+        begin = get_date_week("begin")
+        end = get_date_week("end")
+        if begin > end:
+            sys.exit("Begin_date is after end_date...")
+        return begin, end
+
+def get_range_logtime_month():
+        begin = get_date_month("begin")
+        end = get_date_month("end")
+        if begin > end:
+            sys.exit("Begin_date is after end_date...")
+        return begin, end
+
 
 def get_date(state):
 	now = datetime.now()
@@ -66,12 +75,19 @@ def get_date_yesterday(state):
 	else:
 		return datetime.strptime(str((now - timedelta(days=0)).date()), "%Y-%m-%d")
 
-def get_date_two(state):
+def get_date_week(state):
 	now = datetime.now()
 	if state == "begin":
-		return datetime.strptime(str((now - timedelta(days=2)).date()), "%Y-%m-%d")
+		return datetime.strptime(str((now - timedelta(days=7)).date()), "%Y-%m-%d")
 	else:
-		return datetime.strptime(str((now - timedelta(days=1)).date()), "%Y-%m-%d")
+		return datetime.strptime(str((now - timedelta(days=0)).date()), "%Y-%m-%d")
+
+def get_date_month(state):
+	now = datetime.now()
+	if state == "begin":
+		return datetime.strptime(str((now - timedelta(days=30)).date()), "%Y-%m-%d")
+	else:
+		return datetime.strptime(str((now - timedelta(days=0)).date()), "%Y-%m-%d")
 
 def get_token(grant_type):
 	client = Client(token_endpoint = get_config()["42.token_url"],
@@ -122,11 +138,11 @@ def get_more_location(client, request, locations, range_begin):
 		else:
 			return
 
-def twodaysago():
+def today():
 	client = get_token("client_credentials")
 	#login = get_config()["42.login"]
 	user_id = get_user_id(client, login)
-	range_begin, range_end = get_range_logtime_two()
+	range_begin, range_end = get_range_logtime_today()
 	range_date = "?page[size]=100&range[begin_at]=" + str(range_begin) + "," + str(range_end)
 	request = "/v2/users/" + str(user_id) + "/locations" + range_date
 	locations = client.request(request)
@@ -141,11 +157,11 @@ def twodaysago():
 		(h, m) = format_output_datetime(logtime.days * 86400 + logtime.seconds)
 		#print "between:", first_log, range_begin
 		#print "    and:", last_log, range_end
-		print("2 days ago logtime:" , '%02dh%02d' % (h, m))
+		print("Today's logtime:" , '%02dh%02d' % (h, m))
 	else:
 		#print "between:", range_begin
 		#print "    and:", range_end
-		print("2 days ago logtime not available ...")
+		print("Today's logtime not available ...")
 
 def yesterday():
 	client = get_token("client_credentials")
@@ -172,11 +188,11 @@ def yesterday():
 		#print "    and:", range_end
 		print("Yesterday's logtime not available ...")
 
-def today():
+def weekly():
 	client = get_token("client_credentials")
 	#login = get_config()["42.login"]
 	user_id = get_user_id(client, login)
-	range_begin, range_end = get_range_logtime_today()
+	range_begin, range_end = get_range_logtime_week()
 	range_date = "?page[size]=100&range[begin_at]=" + str(range_begin) + "," + str(range_end)
 	request = "/v2/users/" + str(user_id) + "/locations" + range_date
 	locations = client.request(request)
@@ -191,18 +207,45 @@ def today():
 		(h, m) = format_output_datetime(logtime.days * 86400 + logtime.seconds)
 		#print "between:", first_log, range_begin
 		#print "    and:", last_log, range_end
-		print("Today's logtime:" , '%02dh%02d' % (h, m))
+		print("This week's logtime:" , '%02dh%02d' % (h, m))
 	else:
 		#print "between:", range_begin
 		#print "    and:", range_end
-		print("Today's logtime not available ...")
+		print("This week's logtime is not available ...")
+
+def monthly():
+	client = get_token("client_credentials")
+	#login = get_config()["42.login"]
+	user_id = get_user_id(client, login)
+	range_begin, range_end = get_range_logtime_month()
+	range_date = "?page[size]=100&range[begin_at]=" + str(range_begin) + "," + str(range_end)
+	request = "/v2/users/" + str(user_id) + "/locations" + range_date
+	locations = client.request(request)
+	if locations:
+		get_more_location(client, request, locations, range_begin)
+		first_log = (locations[-1]['begin_at'])[:10]
+		if locations[0]['end_at']:
+			last_log = (locations[0]['end_at'])[:10]
+		else:
+			last_log = ((str(datetime.utcnow())))[:10]
+		logtime = get_logtime(locations)
+		(h, m) = format_output_datetime(logtime.days * 86400 + logtime.seconds)
+		#print "between:", first_log, range_begin
+		#print "    and:", last_log, range_end
+		print("This month's logtime:" , '%02dh%02d' % (h, m))
+	else:
+		#print "between:", range_begin
+		#print "    and:", range_end
+		print("This month's logtime is not available ...")
 
 def main():
 	today()
 	time.sleep(1/2)
 	yesterday()
 	time.sleep(1/2)
-	twodaysago()
+	weekly()
+	time.sleep(1)
+	monthly()
 
 
 login = input("Input your login: ")
