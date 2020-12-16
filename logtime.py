@@ -133,6 +133,7 @@ def get_more_location(client, request, locations, range_begin):
 		last_location = datetime.strptime((locations[-1]['begin_at'])[:10], "%Y-%m-%d")
 		if range_begin < last_location:
 			tmp = client.request(request + "&page[number]=" + str(i))
+			time.sleep(1/2)
 			locations += tmp
 			i += 1
 		else:
@@ -195,6 +196,7 @@ def weekly():
 	range_begin, range_end = get_range_logtime_week()
 	range_date = "?page[size]=100&range[begin_at]=" + str(range_begin) + "," + str(range_end)
 	request = "/v2/users/" + str(user_id) + "/locations" + range_date
+	time.sleep(1/2)
 	locations = client.request(request)
 	if locations:
 		get_more_location(client, request, locations, range_begin)
@@ -244,7 +246,7 @@ def main():
 	yesterday()
 	time.sleep(1/2)
 	weekly()
-	time.sleep(1)
+	time.sleep(1/2)
 	monthly()
 
 
